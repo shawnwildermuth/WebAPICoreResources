@@ -14,5 +14,6 @@ namespace MyCodeCamp.Data
     // Queries
     IEnumerable<Camp> GetAllCamps();
     Camp GetCamp(int id);
+    Camp GetCampWithSpeakers(int id);
   }
 }
