@@ -29,7 +29,10 @@ namespace MyCodeCamp.Data
 
     public IEnumerable<Camp> GetAllCamps()
     {
-      return _context.Camps.ToList();
+      return _context.Camps
+                .Include(c => c.Location)
+                .OrderBy(c => c.EventDate)
+                .ToList();
     }
 
     public Camp GetCamp(int id)
@@ -48,6 +51,62 @@ namespace MyCodeCamp.Data
         .ThenInclude(s => s.Talks)
         .Where(c => c.Id == id)
         .FirstOrDefault();
+    }
+
+    public Speaker GetSpeaker(int speakerId)
+    {
+      return _context.Speakers
+        .Include(s => s.Camp)
+        .Where(s => s.Id == speakerId)
+        .FirstOrDefault();
+    }
+
+    public IEnumerable<Speaker> GetSpeakers(int campId)
+    {
+      return _context.Speakers
+        .Include(s => s.Camp)
+        .Where(s => s.Camp.Id == campId)
+        .OrderBy(s => s.Name)
+        .ToList();
+    }
+
+    public IEnumerable<Speaker> GetSpeakersWithTalks(int campId)
+    {
+      return _context.Speakers
+        .Include(s => s.Camp)
+        .Include(s => s.Talks)
+        .Where(s => s.Camp.Id == campId)
+        .OrderBy(s => s.Name)
+        .ToList();
+    }
+
+    public Speaker GetSpeakerWithTalks(int speakerId)
+    {
+      return _context.Speakers
+        .Include(s => s.Camp)
+        .Include(s => s.Talks)
+        .Where(s => s.Id == speakerId)
+        .FirstOrDefault();
+    }
+
+    public Talk GetTalk(int talkId)
+    {
+      return _context.Talks
+        .Include(t => t.Speaker)
+        .ThenInclude(s => s.Camp)
+        .Where(t => t.Id == talkId)
+        .OrderBy(t => t.Title)
+        .FirstOrDefault();
+    }
+
+    public IEnumerable<Talk> GetTalks(int speakerId)
+    {
+      return _context.Talks
+        .Include(t => t.Speaker)
+        .ThenInclude(s => s.Camp)
+        .Where(t => t.Speaker.Id == speakerId)
+        .OrderBy(t => t.Title)
+        .ToList();
     }
 
     public async Task<bool> SaveAllAsync()
