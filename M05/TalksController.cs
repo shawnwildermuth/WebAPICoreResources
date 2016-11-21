@@ -8,11 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyCodeCamp.Data;
 using MyCodeCamp.Data.Entities;
+using MyCodeCamp.Filters;
 using MyCodeCamp.Models;
 
 namespace MyCodeCamp.Controllers
 {
-  [Route("api/camps/{campId:int}/speakers/{speakerId:int}/talks")]
+  [Route("api/camps/{moniker}/speakers/{speakerId}/talks")]
+  [ModelValidation]
   public class TalksController : BaseController
   {
     private ILogger<TalksController> _logger;
@@ -27,32 +29,30 @@ namespace MyCodeCamp.Controllers
     }
 
     [HttpGet]
-    public IActionResult Get(int campId, int speakerId)
+    public IActionResult Get(string moniker, int speakerId)
     {
       var talks = _repo.GetTalks(speakerId);
 
-      if (talks.Any(t => t.Speaker.Camp.Id != campId)) return BadRequest("Invalid talks for the speaker selected");
+      if (talks.Any(t => t.Speaker.Camp.Moniker != moniker)) return BadRequest("Invalid talks for the speaker selected");
 
       return Ok(_mapper.Map<IEnumerable<TalkModel>>(talks));
     }
 
     [HttpGet("{id}", Name = "GetTalk")]
-    public IActionResult Get(int campId, int speakerId, int id)
+    public IActionResult Get(string moniker, int speakerId, int id)
     {
       var talk = _repo.GetTalk(id);
 
-      if (talk.Speaker.Id != speakerId || talk.Speaker.Camp.Id != campId) return BadRequest("Invalid talk for the speaker selected");
+      if (talk.Speaker.Id != speakerId || talk.Speaker.Camp.Moniker != moniker) return BadRequest("Invalid talk for the speaker selected");
 
       return Ok(_mapper.Map<TalkModel>(talk));
     }
 
     [HttpPost()]
-    public async Task<IActionResult> Post(int campId, int speakerId, [FromBody] TalkModel model)
+    public async Task<IActionResult> Post(string moniker, int speakerId, [FromBody] TalkModel model)
     {
       try
       {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
         var speaker = _repo.GetSpeaker(speakerId);
         if (speaker != null)
         {
@@ -63,7 +63,7 @@ namespace MyCodeCamp.Controllers
 
           if (await _repo.SaveAllAsync())
           {
-            return Created(Url.Link("GetTalk", new { campId = campId, speakerId = speakerId, id = talk.Id }), _mapper.Map<TalkModel>(talk));
+            return Created(Url.Link("GetTalk", new { moniker = moniker, speakerId = speakerId, id = talk.Id }), _mapper.Map<TalkModel>(talk));
           }
         }
 
@@ -78,12 +78,10 @@ namespace MyCodeCamp.Controllers
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int campId, int speakerId, int id, [FromBody] TalkModel model)
+    public async Task<IActionResult> Put(string moniker, int speakerId, int id, [FromBody] TalkModel model)
     {
       try
       {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
         var talk = _repo.GetTalk(id);
         if (talk == null) return NotFound();
 
@@ -105,7 +103,7 @@ namespace MyCodeCamp.Controllers
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int campId, int speakerId, int id)
+    public async Task<IActionResult> Delete(string moniker, int speakerId, int id)
     {
       try
       {

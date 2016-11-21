@@ -53,6 +53,24 @@ namespace MyCodeCamp.Data
         .FirstOrDefault();
     }
 
+    public Camp GetCampByMoniker(string moniker)
+    {
+      return _context.Camps
+        .Include(c => c.Location)
+        .Where(c => c.Moniker.Equals(moniker, StringComparison.CurrentCultureIgnoreCase))
+        .FirstOrDefault();
+    }
+
+    public Camp GetCampByMonikerWithSpeakers(string moniker)
+    {
+      return _context.Camps
+        .Include(c => c.Location)
+        .Include(c => c.Speakers)
+        .ThenInclude(s => s.Talks)
+        .Where(c => c.Moniker.Equals(moniker, StringComparison.CurrentCultureIgnoreCase))
+        .FirstOrDefault();
+    }
+
     public Speaker GetSpeaker(int speakerId)
     {
       return _context.Speakers
@@ -61,21 +79,40 @@ namespace MyCodeCamp.Data
         .FirstOrDefault();
     }
 
-    public IEnumerable<Speaker> GetSpeakers(int campId)
+    public IEnumerable<Speaker> GetSpeakers(int id)
     {
       return _context.Speakers
         .Include(s => s.Camp)
-        .Where(s => s.Camp.Id == campId)
+        .Where(s => s.Camp.Id == id)
         .OrderBy(s => s.Name)
         .ToList();
     }
 
-    public IEnumerable<Speaker> GetSpeakersWithTalks(int campId)
+    public IEnumerable<Speaker> GetSpeakersWithTalks(int id)
     {
       return _context.Speakers
         .Include(s => s.Camp)
         .Include(s => s.Talks)
-        .Where(s => s.Camp.Id == campId)
+        .Where(s => s.Camp.Id == id)
+        .OrderBy(s => s.Name)
+        .ToList();
+    }
+
+    public IEnumerable<Speaker> GetSpeakersByMoniker(string moniker)
+    {
+      return _context.Speakers
+        .Include(s => s.Camp)
+        .Where(s => s.Camp.Moniker.Equals(moniker, StringComparison.CurrentCultureIgnoreCase))
+        .OrderBy(s => s.Name)
+        .ToList();
+    }
+
+    public IEnumerable<Speaker> GetSpeakersByMonikerWithTalks(string moniker)
+    {
+      return _context.Speakers
+        .Include(s => s.Camp)
+        .Include(s => s.Talks)
+        .Where(s => s.Camp.Moniker.Equals(moniker, StringComparison.CurrentCultureIgnoreCase))
         .OrderBy(s => s.Name)
         .ToList();
     }
@@ -107,6 +144,17 @@ namespace MyCodeCamp.Data
         .Where(t => t.Speaker.Id == speakerId)
         .OrderBy(t => t.Title)
         .ToList();
+    }
+
+    public CampUser GetUser(string userName)
+    {
+      return _context.Users
+        .Include(u => u.Claims)
+        .Include(u => u.Roles)
+        .Where(u => u.UserName == userName)
+        .Cast<CampUser>()
+        .FirstOrDefault();
+
     }
 
     public async Task<bool> SaveAllAsync()

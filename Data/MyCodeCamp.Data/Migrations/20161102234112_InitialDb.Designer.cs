@@ -8,9 +8,10 @@ using MyCodeCamp.Data;
 namespace MyCodeCamp.Data.Migrations
 {
     [DbContext(typeof(CampContext))]
-    partial class CampContextModelSnapshot : ModelSnapshot
+    [Migration("20161102234112_InitialDb")]
+    partial class InitialDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
@@ -190,14 +191,9 @@ namespace MyCodeCamp.Data.Migrations
 
                     b.Property<int?>("LocationId");
 
-                    b.Property<string>("Moniker")
-                        .IsRequired();
-
                     b.Property<string>("Name");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate();
+                    b.Property<byte[]>("Version");
 
                     b.HasKey("Id");
 
@@ -249,13 +245,11 @@ namespace MyCodeCamp.Data.Migrations
 
                     b.Property<string>("PhoneNumber");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate();
-
                     b.Property<string>("TwitterName");
 
                     b.Property<string>("UserId");
+
+                    b.Property<byte[]>("Version");
 
                     b.Property<string>("WebsiteUrl");
 
@@ -283,15 +277,13 @@ namespace MyCodeCamp.Data.Migrations
 
                     b.Property<string>("Room");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate();
-
                     b.Property<int?>("SpeakerId");
 
                     b.Property<DateTime>("StartingTime");
 
                     b.Property<string>("Title");
+
+                    b.Property<byte[]>("Version");
 
                     b.HasKey("Id");
 

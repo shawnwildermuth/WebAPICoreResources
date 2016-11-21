@@ -14,5 +14,8 @@ namespace MyCodeCamp.Data.Entities
     public string Room { get; set; }
 
     public Speaker Speaker { get; set; }
+
+    public byte[] RowVersion { get; set; }
+
   }
 }

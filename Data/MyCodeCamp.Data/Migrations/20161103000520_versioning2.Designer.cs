@@ -8,9 +8,10 @@ using MyCodeCamp.Data;
 namespace MyCodeCamp.Data.Migrations
 {
     [DbContext(typeof(CampContext))]
-    partial class CampContextModelSnapshot : ModelSnapshot
+    [Migration("20161103000520_versioning2")]
+    partial class versioning2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
@@ -189,9 +190,6 @@ namespace MyCodeCamp.Data.Migrations
                     b.Property<int>("Length");
 
                     b.Property<int?>("LocationId");
-
-                    b.Property<string>("Moniker")
-                        .IsRequired();
 
                     b.Property<string>("Name");
 
