@@ -14,7 +14,7 @@ using MyCodeCamp.Models;
 namespace MyCodeCamp.Controllers
 {
   [Route("api/camps/{moniker}/speakers/{speakerId}/talks")]
-  [ModelValidation]
+  [ValidateModel]
   public class TalksController : BaseController
   {
     private ILogger<TalksController> _logger;
